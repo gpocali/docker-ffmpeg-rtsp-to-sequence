@@ -17,6 +17,15 @@ fi
 cp /usr/share/zoneinfo/$TIMEZONE /etc/localtime
 echo $TIMEZONE >  /etc/timezone
 
+if [ ! -e /output ]; then
+    echo "No volume mounted to /output.  Exiting."
+    exit 1
+fi
+
+if [ ! -e /output/tmp ]; then
+    mkdir /output/tmp
+fi
+
 docker-ffmpeg-watcher &
 
 echo "$(date) - Processing Started."
