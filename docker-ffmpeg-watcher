@@ -1,0 +1,10 @@
+#!/bin/ash
+# Output File Watcher
+
+inotifywait -m -e close_write /output/tmp | while read dir op file; do
+	# Create Directory if not exists
+	if [ ! -e /output/$(date +%Y)/$(date +%m)/$(date +%d)/$(date +%H) ]; then
+		mkdir -p /output/$(date +%Y)/$(date +%m)/$(date +%d)/$(date +%H)
+	fi
+	mv /output/tmp/$file /output/$(date +%Y)/$(date +%m)/$(date +%d)/$(date +%H)/
+done
