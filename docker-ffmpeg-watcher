@@ -3,8 +3,9 @@
 
 inotifywait -m -e close_write /output/tmp | while read dir op file; do
 	# Create Directory if not exists
-	if [ ! -e /output/$(date +%Y)/$(date +%m)/$(date +%d)/$(date +%H) ]; then
-		mkdir -p /output/$(date +%Y)/$(date +%m)/$(date +%d)/$(date +%H)
+	if [ ! -e /output/$(echo $file | cut -d_ -f2 | cut -d- -f1)/$(echo $file | cut -d_ -f2 | cut -d- -f2)/$(echo $file | cut -d_ -f2 | cut -d- -f3)/$(echo $file | cut -d_ -f3 | cut -d- -f1) ]; then
+		mkdir -p /output/$(echo $file | cut -d_ -f2 | cut -d- -f1)/$(echo $file | cut -d_ -f2 | cut -d- -f2)/$(echo $file | cut -d_ -f2 | cut -d- -f3)/$(echo $file | cut -d_ -f3 | cut -d- -f1)
 	fi
-	mv /output/tmp/$file /output/$(date +%Y)/$(date +%m)/$(date +%d)/$(date +%H)/
+    # Convert TS to MP4
+	ffmpeg -i /output/tmp/$file -c copy /output/$(echo $file | cut -d_ -f2 | cut -d- -f1)/$(echo $file | cut -d_ -f2 | cut -d- -f2)/$(echo $file | cut -d_ -f2 | cut -d- -f3)/$(echo $file | cut -d_ -f3 | cut -d- -f1)$(echo $file | cut -d. -f1).mp4
 done

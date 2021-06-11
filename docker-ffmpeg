@@ -26,14 +26,22 @@ if [ ! -e /output/tmp ]; then
     mkdir /output/tmp
 fi
 
+# Cleanup premature exits from previous runs
 if [ $(ls /output/tmp | wc -l) -ne 0 ]; then
-    rm /output/tmp/*
+    for $file in $(ls /output/tmp); do
+        # Create Directory if not exists
+        if [ ! -e /output/$(echo $file | cut -d_ -f2 | cut -d- -f1)/$(echo $file | cut -d_ -f2 | cut -d- -f2)/$(echo $file | cut -d_ -f2 | cut -d- -f3)/$(echo $file | cut -d_ -f3 | cut -d- -f1) ]; then
+            mkdir -p /output/$(echo $file | cut -d_ -f2 | cut -d- -f1)/$(echo $file | cut -d_ -f2 | cut -d- -f2)/$(echo $file | cut -d_ -f2 | cut -d- -f3)/$(echo $file | cut -d_ -f3 | cut -d- -f1)
+        fi
+        # Convert TS to MP4
+        ffmpeg -i /output/tmp/$file -c copy /output/$(echo $file | cut -d_ -f2 | cut -d- -f1)/$(echo $file | cut -d_ -f2 | cut -d- -f2)/$(echo $file | cut -d_ -f2 | cut -d- -f3)/$(echo $file | cut -d_ -f3 | cut -d- -f1)$(echo $file | cut -d. -f1).mp4
+    done
 fi
 
 docker-ffmpeg-watcher &
 
 echo "$(date) - Processing Started."
-ffmpeg -analyzeduration 60 -probesize 50000000 -fflags discardcorrupt+genpts+nobuffer+autobsf -f rtsp -rtsp_transport tcp -stimeout 5000000 -re -err_detect ignore_err -i ${INPUT_STREAM} -flags +global_header -c copy -f segment -segment_time ${SEGMENT_TIME} -segment_atclocktime 1 -segment_format ${SEGMENT_FORMAT} -strftime 1 /output/tmp/${OUTPUT_PREFIX}_%Y-%m-%d_%H-%M-%S_%Z.mp4
+ffmpeg -analyzeduration 60 -probesize 50000000 -fflags discardcorrupt+genpts+nobuffer+autobsf -f rtsp -rtsp_transport tcp -stimeout 5000000 -re -err_detect ignore_err -i ${INPUT_STREAM} -flags +global_header -c copy -f segment -segment_time ${SEGMENT_TIME} -segment_atclocktime 1 -segment_format ${SEGMENT_FORMAT} -strftime 1 /output/tmp/${OUTPUT_PREFIX}_%Y-%m-%d_%H-%M-%S_%Z.ts
 echo "$(date) - Processing Complete."
 
 exit 0

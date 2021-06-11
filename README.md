@@ -3,7 +3,7 @@
 
 ## Environmental Variables
  - INPUT_STREAM - RTSP URL for originating stream
- - OUTPUT_PREFIX - Text to add before timestamp on output files
+ - OUTPUT_PREFIX - Text to add before timestamp on output files (MUST NOT INCLUDE "." or "_")
  - SEGMENT_TIME - Clock time in seconds to split the files based on 24 hour clock
  - SEGMENT_FORMAT - FFMPEG format to make the output files
  
