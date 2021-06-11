@@ -28,7 +28,7 @@ fi
 
 # Cleanup premature exits from previous runs
 if [ $(ls /output/tmp | wc -l) -ne 0 ]; then
-    for $file in $(ls /output/tmp); do
+    for file in $(ls /output/tmp); do
         # Create Directory if not exists
         if [ ! -e /output/$(echo $file | cut -d_ -f2 | cut -d- -f1)/$(echo $file | cut -d_ -f2 | cut -d- -f2)/$(echo $file | cut -d_ -f2 | cut -d- -f3)/$(echo $file | cut -d_ -f3 | cut -d- -f1) ]; then
             mkdir -p /output/$(echo $file | cut -d_ -f2 | cut -d- -f1)/$(echo $file | cut -d_ -f2 | cut -d- -f2)/$(echo $file | cut -d_ -f2 | cut -d- -f3)/$(echo $file | cut -d_ -f3 | cut -d- -f1)
