@@ -1,12 +1,15 @@
 #!/bin/ash
 # Output File Watcher
 
-inotifywait -m -e close_write /output/tmp | while read dir op file; do
-	# Create Directory if not exists
-	if [ ! -e /output/$(echo $file | cut -d_ -f2 | cut -d- -f1)/$(echo $file | cut -d_ -f2 | cut -d- -f2)/$(echo $file | cut -d_ -f2 | cut -d- -f3)/$(echo $file | cut -d_ -f3 | cut -d- -f1) ]; then
-		mkdir -p /output/$(echo $file | cut -d_ -f2 | cut -d- -f1)/$(echo $file | cut -d_ -f2 | cut -d- -f2)/$(echo $file | cut -d_ -f2 | cut -d- -f3)/$(echo $file | cut -d_ -f3 | cut -d- -f1)
-	fi
-    # Convert TS to MP4
-	ffmpeg -i /output/tmp/$file -c copy /output/$(echo $file | cut -d_ -f2 | cut -d- -f1)/$(echo $file | cut -d_ -f2 | cut -d- -f2)/$(echo $file | cut -d_ -f2 | cut -d- -f3)/$(echo $file | cut -d_ -f3 | cut -d- -f1)/$(echo $file | cut -d. -f1).mp4
-    ffprobe /output/tmp/$file 2&>/dev/null && rm /output/tmp/$file || echo "Temporary file not deleted because final file is corrupt - /output/tmp/$file"
+while true; do
+    inotifywait -m -e close_write /output/tmp | while read dir op file; do
+        # Create Directory if not exists
+        if [ ! -e /output/$(echo $file | cut -d_ -f2 | cut -d- -f1)/$(echo $file | cut -d_ -f2 | cut -d- -f2)/$(echo $file | cut -d_ -f2 | cut -d- -f3)/$(echo $file | cut -d_ -f3 | cut -d- -f1) ]; then
+            mkdir -p /output/$(echo $file | cut -d_ -f2 | cut -d- -f1)/$(echo $file | cut -d_ -f2 | cut -d- -f2)/$(echo $file | cut -d_ -f2 | cut -d- -f3)/$(echo $file | cut -d_ -f3 | cut -d- -f1)
+        fi
+        # Convert TS to MP4
+        ffmpeg -hide_banner -i /output/tmp/$file -c copy /output/$(echo $file | cut -d_ -f2 | cut -d- -f1)/$(echo $file | cut -d_ -f2 | cut -d- -f2)/$(echo $file | cut -d_ -f2 | cut -d- -f3)/$(echo $file | cut -d_ -f3 | cut -d- -f1)/$(echo $file | cut -d. -f1).mp4
+        ffprobe /output/tmp/$file 2&>/dev/null && rm /output/tmp/$file || echo "Temporary file not deleted because final file is corrupt - /output/tmp/$file"
+    done
+    sleep 5
 done
