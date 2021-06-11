@@ -26,10 +26,14 @@ if [ ! -e /output/tmp ]; then
     mkdir /output/tmp
 fi
 
+if [ $(ls /output/tmp | wc -l) -ne 0 ]; then
+    rm /output/tmp/*
+fi
+
 docker-ffmpeg-watcher &
 
 echo "$(date) - Processing Started."
-ffmpeg -analyzeduration 60 -probesize 50000000 -fflags discardcorrupt -f rtsp -rtsp_transport tcp -stimeout 5000000 -re -err_detect ignore_err -i ${INPUT_STREAM} -flags +global_header -c copy -f segment -segment_time ${SEGMENT_TIME} -segment_atclocktime 1 -segment_format ${SEGMENT_FORMAT} -strftime 1 /output/tmp/${OUTPUT_PREFIX}_%Y-%m-%d_%H-%M-%S_%Z.mp4
+ffmpeg -analyzeduration 60 -probesize 50000000 -fflags discardcorrupt+genpts+nobuffer+autobsf -f rtsp -rtsp_transport tcp -stimeout 5000000 -re -err_detect ignore_err -i ${INPUT_STREAM} -flags +global_header -c copy -f segment -segment_time ${SEGMENT_TIME} -segment_atclocktime 1 -segment_format ${SEGMENT_FORMAT} -strftime 1 /output/tmp/${OUTPUT_PREFIX}_%Y-%m-%d_%H-%M-%S_%Z.mp4
 echo "$(date) - Processing Complete."
 
 exit 0
