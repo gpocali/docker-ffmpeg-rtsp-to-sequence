@@ -47,7 +47,7 @@ while true; do
             fi
             # Convert TS to MP4
             echo "$(date) - Starting Processing of Previous Temporary File - $file"
-            ffmpeg -hide_banner -fflags discardcorrupt -err_detect ignore_err -i /output/tmp/$file -c copy /output/$(echo $file | cut -d_ -f2 | cut -d- -f1)/$(echo $file | cut -d_ -f2 | cut -d- -f2)/$(echo $file | cut -d_ -f2 | cut -d- -f3)/$(echo $file | cut -d_ -f3 | cut -d- -f1)/$(echo $file | cut -d. -f1).mp4
+            ffmpeg -hide_banner -fflags discardcorrupt -err_detect ignore_err -i /output/tmp/$file -c copy /output/$(echo $file | cut -d_ -f2 | cut -d- -f1)/$(echo $file | cut -d_ -f2 | cut -d- -f2)/$(echo $file | cut -d_ -f2 | cut -d- -f3)/$(echo $file | cut -d_ -f3 | cut -d- -f1)/$(echo $file | cut -d. -f1).${SEGMENT_EXTENSION}
             ffprobe /output/tmp/$file 2&>/dev/null
             if [ $? -eq 0 ]; then
                 rm /output/tmp/$file
@@ -68,9 +68,15 @@ while true; do
     else
         AUDIO=""
     fi
+    
+    if [ $ADD_BUFFER -eq 1 ]; then
+        BUFFER="nobuffer+"
+    else
+        BUFFER=""
+    fi
 
     echo "$(date) - Processing Started."
-    ffmpeg -analyzeduration 60 -probesize 50000000 -fflags discardcorrupt+genpts+nobuffer+autobsf -f rtsp -rtsp_transport tcp -stimeout 5000000 -re -err_detect ignore_err -i ${INPUT_STREAM} ${AUDIO} -flags +global_header -movflags frag_keyframe+empty_moov+default_base_moof+rtphint -c copy -f segment -segment_time ${SEGMENT_TIME} -segment_atclocktime 1 -segment_format ${SEGMENT_FORMAT} -strftime 1 /output/tmp/${OUTPUT_PREFIX}_%Y-%m-%d_%H-%M-%S_%Z.ts
+    ffmpeg -analyzeduration 60 -probesize 50000000 -fflags discardcorrupt+genpts+${BUFFER}autobsf -f rtsp -rtsp_transport tcp -stimeout 5000000 -re -err_detect ignore_err -i ${INPUT_STREAM} ${AUDIO} -flags +global_header -movflags frag_keyframe+empty_moov+default_base_moof+rtphint -c copy -f segment -segment_time ${SEGMENT_TIME} -segment_atclocktime 1 -segment_format ${SEGMENT_FORMAT} -strftime 1 /output/tmp/${OUTPUT_PREFIX}_%Y-%m-%d_%H-%M-%S_%Z.ts
     echo "$(date) - Processing Exit."
     sleep 5
 done
