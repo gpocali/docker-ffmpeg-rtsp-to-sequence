@@ -9,7 +9,17 @@ while true; do
         fi
         # Convert TS to MP4
         ffmpeg -hide_banner -i /output/tmp/$file -c copy /output/$(echo $file | cut -d_ -f2 | cut -d- -f1)/$(echo $file | cut -d_ -f2 | cut -d- -f2)/$(echo $file | cut -d_ -f2 | cut -d- -f3)/$(echo $file | cut -d_ -f3 | cut -d- -f1)/$(echo $file | cut -d. -f1).mp4
-        ffprobe /output/tmp/$file 2&>/dev/null && rm /output/tmp/$file || echo "Temporary file not deleted because final file is corrupt - /output/tmp/$file"
+        ffprobe /output/tmp/$file 2&>/dev/null
+        if [ $? -eq 0 ]; then
+            rm /output/tmp/$file
+        else
+            if [ $DELETE_CORRUPT -eq 1 ]; then
+                echo "Final file is corrupt but DELETE_CORRUPT is set - Deleting temporary file - /output/tmp/$file"
+                rm /output/tmp/$file
+            else
+                echo "Temporary file not deleted because final file is corrupt - /output/tmp/$file"
+            fi
+        fi
     done
     sleep 5
 done
