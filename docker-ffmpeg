@@ -76,7 +76,7 @@ while true; do
     fi
 
     echo "$(date) - Processing Started."
-    ffmpeg -analyzeduration 5000000 -probesize 50000000 -fflags discardcorrupt+genpts+${BUFFER}autobsf -f rtsp -rtsp_transport tcp -stimeout 5000000 -re -err_detect ignore_err -i ${INPUT_STREAM} ${AUDIO} -flags +global_header -movflags frag_keyframe+empty_moov+default_base_moof+rtphint -c copy -f segment -segment_time ${SEGMENT_TIME} -segment_atclocktime 1 -segment_format ${SEGMENT_FORMAT} -strftime 1 /output/tmp/${OUTPUT_PREFIX}_%Y-%m-%d_%H-%M-%S_%Z.ts
+    ffmpeg -analyzeduration 5000000 -probesize 50000000 -fflags discardcorrupt+genpts+${BUFFER}autobsf -f rtsp -rtsp_flags prefer_tcp -timeout 5000000 -re -err_detect ignore_err -i ${INPUT_STREAM} ${AUDIO} -flags +global_header -movflags frag_keyframe+empty_moov+default_base_moof+rtphint -c copy -f segment -segment_time ${SEGMENT_TIME} -segment_atclocktime 1 -segment_format ${SEGMENT_FORMAT} -strftime 1 /output/tmp/${OUTPUT_PREFIX}_%Y-%m-%d_%H-%M-%S_%Z.ts
     echo "$(date) - Processing Exit."
     sleep 5
 done
