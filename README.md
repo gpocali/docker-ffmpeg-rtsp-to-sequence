@@ -1,5 +1,5 @@
 # docker-ffmpeg-rtsp-to-sequence
- Docker FFMPEG in Alpine Linux to Record RTSP to Sequnce of MP4 Files
+ Docker FFMPEG in Alpine Linux to Record RTSP to Sequence of MP4 Files
 
 ## Environmental Variables
  - INPUT_STREAM - RTSP URL for originating stream
@@ -13,8 +13,8 @@
  
 ## Output Volume
  - /output - Output files will be generated in the volume mounted to this folder
- -- /output/[YEAR]/[MONTH]/[DAY]/[HOUR]/[OUTPUT_PREFIX]_[YEAR]-[MONTH]-[DAY]_[HOUR]-[MINUTE]-[SECOND]_[TIMEZONE].[SEGMENT_EXTENSION]
- -- /output/tmp - Temporary folder for in progress recordings
+  - /output/[YEAR]/[MONTH]/[DAY]/[HOUR]/[OUTPUT_PREFIX]_[YEAR]-[MONTH]-[DAY]_[HOUR]-[MINUTE]-[SECOND]_[TIMEZONE].[SEGMENT_EXTENSION]
+  - /output/tmp - Temporary folder for in progress recordings
  
 ## Automatic Cleanup
  - Files are recorded in TS format and then are converted to MP4 when moved to final directory
